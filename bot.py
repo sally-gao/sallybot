@@ -8,7 +8,7 @@ class Bot:
         self.slack_client = SlackClient(token)
         self.bot_id = self.get_bot_id()
         self.respond_types = ['message']
-        self.random_messages = ['purrr', 'meow!', 'hi there!',
+        self.random_messages = ['purrr', 'meow!', 'hi there!', 'beep beep boop',
                                 'am I a sally bot or sally gao? #existentialdilemma']
         
     
