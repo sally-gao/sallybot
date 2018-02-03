@@ -1,1 +1,1 @@
-web: python sallybot.py
+worker: python sallybot.py
