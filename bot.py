@@ -8,8 +8,7 @@ class Bot:
         self.slack_client = SlackClient(token)
         self.bot_id = self.get_bot_id()
         self.respond_types = ['message']
-        self.random_messages = ['purrr', 'meow!', 'hi there!', 'beep beep boop',
-                                'am I a sally bot or sally gao? #existentialdilemma']
+        self.random_messages = get_messages('random_messages.txt')
         
     
     def get_bot_id(self):
@@ -21,6 +20,12 @@ class Bot:
                 return (user['id'])
         
         return None
+    
+    def get_messages(self, filepath):
+        with open(filepath) as file:     
+            msgs = tuple(line.strip() for line in file.readlines())
+            
+        return msgs
     
     def listen(self):
         if self.slack_client.rtm_connect(with_team_state=False):
