@@ -8,7 +8,7 @@ class Bot:
         self.slack_client = SlackClient(token)
         self.bot_id = self.get_bot_id()
         self.respond_types = ['message']
-        self.random_messages = get_messages('random_messages.txt')
+        self.random_messages = self.get_messages('random_messages.txt')
         
     
     def get_bot_id(self):
