@@ -1,25 +1,17 @@
 from slackclient import SlackClient
 import time
 import random
+import os
+import message
 
 class Bot:
     
     def __init__(self, token):
         self.slack_client = SlackClient(token)
-        self.bot_id = self.get_bot_id()
-        self.respond_types = ['message']
+        self.bot_uid = os.environ.get('bot_uid')
         self.random_messages = self.get_messages('random_messages.txt')
+        self.events = []
         
-    
-    def get_bot_id(self):
-        
-        users = self.slack_client.api_call("users.list")["members"]
-        
-        for user in users:
-            if user['name'] == 'sallybot':
-                return (user['id'])
-        
-        return None
     
     def get_messages(self, filepath):
         with open(filepath) as file:     
@@ -41,25 +33,41 @@ class Bot:
         
         if events and len(events) > 0:
             for event in events:
-                if event['type'] in self.respond_types:
+                if event['type']=='message':
+                    self.log(event)
                     self.respond(event)
+    
+    def log(self, event):
+        self.slack_client.api_call("chat.postMessage",
+                                   channel="D92M6HY8H",
+                                   text=str(event),
+                                   as_user=True)
     
     def respond(self, event):
         
-        if event['type'] == 'message':
-            
-            # if bot is mentioned, respond 'meow!'
-            if ("<@%s>" % self.bot_id) in event['text']:
-                self.slack_client.api_call("chat.postMessage",
-                                           channel=event['channel'],
-                                           text='meow!',
-                                           as_user=True)
-            
+        msg = message.Message(event)
+        response = msg.get_response()
         
-            # else if bot is DM'd, respond with one of the preset responses:
-            elif not(event['user']==self.bot_id) and event['channel'][0]=='D':
-                self.slack_client.api_call("chat.postMessage",
-                                           channel=event['channel'],
-                                           text=random.choice(self.random_messages),
-                                           as_user=True)
-            
+        if response=="do nothing":
+            pass
+        
+        elif response=="random message":
+            self.random_message(msg)
+        
+        elif response=="say meow":
+            self.say_meow(msg)
+    
+    
+    def random_message(self, msg):
+        self.slack_client.api_call("chat.postMessage",
+                                   channel=msg.channel,
+                                   text=random.choice(self.random_messages),
+                                   as_user=True)
+    
+    def say_meow(self, msg):
+        self.slack_client.api_call("chat.postMessage",
+                                   channel=msg.channel,
+                                   text='meow!',
+                                   as_user=True)
+        
+
