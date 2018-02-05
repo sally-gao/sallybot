@@ -33,7 +33,7 @@ class Bot:
         
         if events and len(events) > 0:
             for event in events:
-                if event['type']=='message':
+                if event['type']=='message' and not(event['user']==self.bot_uid): # rmv 2nd exp when change log
                     self.log(event)
                     self.respond(event)
     
