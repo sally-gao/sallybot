@@ -53,6 +53,9 @@ class Bot:
         
         elif response=="random message":
             self.random_message(msg)
+            
+        elif response=="say hi":
+            self.say_hi(msg)
         
         elif response=="say meow":
             self.say_meow(msg)
@@ -62,6 +65,17 @@ class Bot:
         self.slack_client.api_call("chat.postMessage",
                                    channel=msg.channel,
                                    text=random.choice(self.random_messages),
+                                   as_user=True)
+    
+    def say_hi(self, msg):
+        api_call = self.slack_client.api_call("users.info", user=msg.user)
+        
+        if api_call.get('ok'):
+            fname = api_call.get('user').get('profile').get('first_name')
+        
+        self.slack_client.api_call("chat.postMessage",
+                                   channel=msg.channel,
+                                   text='Hello '+fname+'!',
                                    as_user=True)
     
     def say_meow(self, msg):

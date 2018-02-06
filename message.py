@@ -28,6 +28,9 @@ class Message:
         elif "say meow" in self.text:
             return "say meow"
         
+        elif self.text.lower().startswith(('hi','hey','hello','howdy','sup')):
+            return "say hi"
+        
         else:
             return "random message"
 
